@@ -30,3 +30,7 @@ def list_files(path):
         files.extend(filenames)
         break
     return [os.path.join(path, x) for x in files]
+
+def check_device():
+    device_name = tf.test.gpu_device_name()
+    assert device_name == '/device:GPU:0'

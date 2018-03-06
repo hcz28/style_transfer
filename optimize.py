@@ -3,7 +3,7 @@ import vgg, pdb, time, os
 import tensorflow as tf
 import numpy as np
 import transform
-from utils import get_img
+from utils import get_img, check_device
 
 STYLE_LAYERS = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 CONTENT_LAYER = 'relu4_2'
@@ -12,6 +12,7 @@ DEVICES = 'CUDA_VISIBLE_DEVICES'
 def optimize(content_targets, style_target, content_weight, style_weight,
         tv_weight, vgg_path, epochs=2, print_iterations=1000, batch_size=4,
         save_path='saver/fns.ckpt', learning_rate=1e-3):
+    check_device()
     mod = len(content_targets) % batch_size
     if mod > 0:
         print("Train set has been trimmed slightly..")
@@ -43,7 +44,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
     loss = content_loss + style_loss + tv_loss
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
-    with tf.Session() as sess:
+    with tf.device('/device:GPU:0'), tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         
         for epoch in range(epochs):
@@ -81,7 +82,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
 def _style_features(style_target, vgg_path):
     style_features = {}
     style_shape = (1,) + style_target.shape 
-    with tf.Session() as sess:
+    with tf.device('/device:GPU:0'), f.Session() as sess:
         style_placeholder = tf.placeholder(tf.float32, shape = style_shape, name = 'style_image')
         style_placeholder_pre = vgg.preprocess(style_placeholder)
         #pdb.set_trace()
