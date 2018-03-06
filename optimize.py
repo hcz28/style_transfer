@@ -17,40 +17,39 @@ def optimize(content_targets, style_target, content_weight, style_weight,
         print("Train set has been trimmed slightly..")
         content_targets = content_targets[:-mod] # discard the remaining
     
+    batch_shape = (batch_size, 256, 256, 3)
+
     # precompute style features
     style_features = _style_features(style_target, vgg_path)
     
-    batch_shape = (batch_size, 256, 256, 3)
-    with tf.Graph().as_default(), tf.Session() as sess:
-        X_content = tf.placeholder(tf.float32, shape=batch_shape, name="X_content")
-        X_pre = vgg.preprocess(X_content)
+    X_content = tf.placeholder(tf.float32, shape=batch_shape, name="X_content")
+    X_pre = vgg.preprocess(X_content)
 
-        # precompute content features
-        content_features = {}
-        content_net = vgg.net(vgg_path, X_pre)
-        content_features[CONTENT_LAYER] = content_net[CONTENT_LAYER]
+    # compute content features
+    content_features = {}
+    content_net = vgg.net(vgg_path, X_pre)
+    content_features[CONTENT_LAYER] = content_net[CONTENT_LAYER]
         
-        # content is the input for both the transform network and the loss
-        # network
-        preds = transform.net(X_content/255.0)
-        preds_pre = vgg.preprocess(preds)
-        
-        net = vgg.net(vgg_path, preds_pre)
-        content_loss = _content_loss(content_weight, net, content_features,
-                batch_size)
-        style_loss = _style_loss(style_weight, net, style_features)
-        tv_loss = _tv_loss(tv_weight, preds, batch_shape)
+    # content is the input for both the transform network and the loss
+    # network
+    preds = transform.net(X_content/255.0)
+    preds_pre = vgg.preprocess(preds)    
+    net = vgg.net(vgg_path, preds_pre)
 
-        loss = content_loss + style_loss + tv_loss
-        
-        train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+    # compute loss
+    content_loss = _content_loss(content_weight, net, content_features, batch_size)
+    style_loss = _style_loss(style_weight, net, style_features)
+    tv_loss = _tv_loss(tv_weight, preds, batch_shape)
+    loss = content_loss + style_loss + tv_loss
+    train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+
+    with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         
         for epoch in range(epochs):
             num_examples = len(content_targets)
             iterations = 0
             while iterations * batch_size < num_examples:
-                start_time = time.time()
                 curr = iterations * batch_size
                 step = curr + batch_size
                 X_batch = np.zeros(batch_shape, dtype=np.float32)
@@ -63,9 +62,8 @@ def optimize(content_targets, style_target, content_weight, style_weight,
                 feed_dict = {
                         X_content : X_batch 
                         }
-                train_step.run(feed_dict = feed_dict)
-                end_time = time.time()
-                delta_time = end_time - start_time 
+                #train_step.run(feed_dict = feed_dict)
+                sess.run(train_step, feed_dict = feed_dict)
                 is_print_iter = int(iterations) % print_iterations == 0
                 is_last = epoch == epochs - 1 and iterations * batch_size >= num_examples
                 should_print = is_print_iter or is_last
@@ -83,7 +81,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
 def _style_features(style_target, vgg_path):
     style_features = {}
     style_shape = (1,) + style_target.shape 
-    with tf.Graph().as_default(), tf.device('/cpu:0'), tf.Session() as sess:
+    with tf.Session() as sess:
         style_placeholder = tf.placeholder(tf.float32, shape = style_shape, name = 'style_image')
         style_placeholder_pre = vgg.preprocess(style_placeholder)
         #pdb.set_trace()
@@ -105,7 +103,8 @@ def _style_loss(style_weight, net, style_features):
     style_losses = []
     for style_layer in STYLE_LAYERS:
         layer = net[style_layer]
-        bs, height, width, filters = map(lambda i:i.value, layer.get_shape())
+        #bs, height, width, filters = map(lambda i:i.value, layer.get_shape())
+        bs, height, width, filters = [i.value for i in layer.shape]
         size = height * width * filters
         feats = tf.reshape(layer, (bs, height * width, filters))
         feats_T = tf.transpose(feats, perm=[0,2,1])
@@ -114,7 +113,6 @@ def _style_loss(style_weight, net, style_features):
         grams = tf.matmul(feats_T, feats) / size
         style_gram = style_features[style_layer] # style features
         style_losses.append(2 * tf.nn.l2_loss(grams - style_gram) / style_gram.size)
-    
     style_loss = style_weight * functools.reduce(tf.add, style_losses) / bs
     return style_loss
 
