@@ -23,16 +23,17 @@ STYLE_PATH = 'data/style_targets/horses.jpg'
 
 def build_parser():
     parser = ArgumentParser()
-    parser.add_argument('--checkpoint-dir', type=str, dest='checkpoint_dir',
-            help='dir to save checkpoint in', metavar='CHECKPOINT_DIR',
-            default=CHECKPOINT_DIR)
     
     parser.add_argument('--style', type=str, dest='style', 
-            help='style images path', metavar='STYLE', default= STYLE_PATH)
+            help='style images path', metavar='STYLE', required = True)
 
     parser.add_argument('--train-path', type=str, dest='train_path',
             help='path to training images folder', metavar='TRAIN_PATH', 
             default=TRAIN_PATH)
+
+    parser.add_argument('--checkpoint-dir', type=str, dest='checkpoint_dir',
+            help='dir to save checkpoint in', metavar='CHECKPOINT_DIR',
+            default=CHECKPOINT_DIR)
 
     parser.add_argument('--test', type=str, dest='test', 
             help='test image path', metavar='TEST', default=False)
@@ -86,18 +87,18 @@ def check_opts(opts):
     assert opts.style_weight >= 0
     assert opts.tv_weight >= 0
     assert opts.learning_rate >= 0
-
+"""
 def _get_files(img_dir):
     files = list_files(img_dir)
     return [os.path.join(img_dir, x) for x in files]
-
+"""
 def main():
     parser = build_parser()
     options = parser.parse_args()
     check_opts(options)
 
     style_target = get_img(options.style)
-    content_targets = _get_files(options.train_path)
+    content_targets = list_files(options.train_path)
     kwargs = {
             "epochs":options.epochs,
             "print_iterations":options.checkpoint_iterations,
@@ -116,10 +117,10 @@ def main():
     start_time = time.time()
     for preds, losses, i, epoch in optimize(*args, **kwargs):
         style_loss, content_loss, tv_loss, loss = losses
-        print('----------{0} Epoch: {1}, Iteration: {2}----------'.format(time.ctime(), epoch, i))
+        print('{0} ---------- Epoch: {1}, Iteration: {2}----------'.format(time.ctime(), epoch, i))
         print('Total loss: {0}, Style loss: {1}, Content loss: {2}, TV loss: {3}'
                 .format(loss, style_loss, content_loss, tv_loss))
-    print("Training complete! Total training time is {0}".format(time.time() - start_time))
+    print("Training complete! Total training time is {0} s".format(time.time() - start_time))
 
 if __name__ == '__main__':
     main()

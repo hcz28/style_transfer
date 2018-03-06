@@ -29,4 +29,4 @@ def list_files(path):
     for (dirpath, dirnames, filenames) in os.walk(path):
         files.extend(filenames)
         break
-    return files
+    return [os.path.join(path, x) for x in files]
