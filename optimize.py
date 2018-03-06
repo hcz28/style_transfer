@@ -12,7 +12,6 @@ DEVICES = 'CUDA_VISIBLE_DEVICES'
 def optimize(content_targets, style_target, content_weight, style_weight,
         tv_weight, vgg_path, epochs=2, print_iterations=1000, batch_size=4,
         save_path='saver/fns.ckpt', learning_rate=1e-3):
-    check_device()
     mod = len(content_targets) % batch_size
     if mod > 0:
         print("Train set has been trimmed slightly..")
@@ -82,7 +81,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
 def _style_features(style_target, vgg_path):
     style_features = {}
     style_shape = (1,) + style_target.shape 
-    with tf.device('/device:GPU:0'), f.Session() as sess:
+    with tf.device('/device:GPU:0'), tf.Session() as sess:
         style_placeholder = tf.placeholder(tf.float32, shape = style_shape, name = 'style_image')
         style_placeholder_pre = vgg.preprocess(style_placeholder)
         #pdb.set_trace()
