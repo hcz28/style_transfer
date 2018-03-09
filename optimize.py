@@ -43,7 +43,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
     loss = content_loss + style_loss + tv_loss
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
-    with tf.device('/device:GPU:0'), tf.Session() as sess:
+    with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         
         for epoch in range(epochs):
