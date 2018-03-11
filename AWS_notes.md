@@ -28,15 +28,17 @@
         check GPU
         ```
         lspci | grep -i nvidia
+        ```
         install
         ```
         wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
         sudo sh cuda_9.0.176_384.81_linux.run
+        ```
         environment setup
         ```
         export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} 
         export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-
+        ```
     
 
 
