@@ -30,23 +30,26 @@
         export PATH=~/anaconda3/bin:$PATH
     2. CUDA 9.0
         
-        check GPU
+        1. install make gcc first
+        
+        2. check GPU
         ```
         lspci | grep -i nvidia
         ```
-        install
+        3. install
         ```
         wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
-        sudo sh cuda_9.0.176_384.81_linux.run
+        sudo sh cuda_9.0.176_384.81_linux.run --tmpdir=<path>
         ```
-        environment setup
+        4. environment setup
         ```
         export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} 
         export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
         ```
     3. cuDNN
+        first download the installation file into local disk and then use scp to transfer
+        data
         ```
-        wget https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1+cuda9.0_amd64
         sudo dpkg -i libcudnn7_7.0.3.11-1+cuda9.0_amd64.deb
         export CUDA_HOEM=/usr/local/cuda
         ```
@@ -82,3 +85,4 @@ References
   Guide](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4VZnqTJ2A)
 - [cuDNN Installation
   Guide](http://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/Doc/cuDNN-Installation-Guide.pdf?uUC-ZDHRpDmlrNq_7GTYkv87I6DMyvaoxYPW7GmQs3Hd8I738fu2u9NDNsXZDu21SglpQCxd4Y4IBhHp5iuXFsD43i54dybJchanofnRidbVVmk8v8ujlkEFYhiARRkgqzBDUsQklP3aE2UmIOrDKjRu6qbUP8q5Fh6HuZPr3wQiiX8XBXI353R3emrZxiT9Mg)
+- [Tensorflow Installation Guide](https://www.tensorflow.org/install/install_linux)
