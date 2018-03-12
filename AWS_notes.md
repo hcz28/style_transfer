@@ -17,7 +17,11 @@
     4. 注意该EBS卷会保留
     5. 再次创建或申请instance，attach上面的数据EBS卷到实例，lsblk, mount就可以了, 注意不能mkfs了
     6. 使用之前的数据
-3. [使用ssh链接以及数据传输](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html)
+3. 使用ssh链接以及数据传输
+    ```
+    ssh -i /path/my-key-pair.pem user_name@public_dns_name
+    scp -i /path/my-key-pair.pem /path/SampleFile.txt user_name@public_dns_name:destination_path
+    ```
 4. 环境配置
     1. Anaconda
         ```
@@ -46,7 +50,7 @@
         sudo dpkg -i libcudnn7_7.0.3.11-1+cuda9.0_amd64.deb
         export CUDA_HOEM=/usr/local/cuda
         ```
-    4. install libcupti-dev library
+    4. Install libcupti-dev library
         ```
         sudo apt-get install cuda-command-line-tools
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
@@ -63,13 +67,15 @@
         with tf.device('/gpu:0'), tf.Session() as sess:
             print(sess.run(hello))
         ```
+    7. Download code
+        ```
+        wget https://github.com/hcz28/style_transfer.git
+        ```
 
-
-
-
-Reference
-- 请问一个使用Amazon EC2 P2竞价实例做计算数据保存的问题? - Ray Wang的回答 - 知乎https://www.zhihu.com/question/62458408/answer/199345173
-- https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/ebs-using-volumes.html
+References
+- [请问一个使用Amazon EC2 P2竞价实例做计算数据保存的问题? - Ray Wang的回答 - 知乎](https://www.zhihu.com/question/62458408/answer/199345173)
+- [使用ssh链接以及数据传输](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html)
+- [Amason EBS Guide](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/ebs-using-volumes.html)
 - [CUDA Installation
   Guide](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4VZnqTJ2A)
 - [cuDNN Installation
