@@ -17,7 +17,7 @@
     4. 注意该EBS卷会保留
     5. 再次创建或申请instance，attach上面的数据EBS卷到实例，lsblk, mount就可以了, 注意不能mkfs了
     6. 使用之前的数据
-3. [使用ssh链接以数据传输](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html)
+3. [使用ssh链接以及数据传输](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html)
 4. 环境配置
     1. Anaconda
         ```
@@ -34,14 +34,42 @@
         wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
         sudo sh cuda_9.0.176_384.81_linux.run
         ```
-        environment setup
+        evvironment setup
         ```
         export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} 
         export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
         ```
-    
+    3. cuDNN
+        ```
+        wget https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/9.0_20171129/Ubuntu16_04-x64/libcudnn7_7.0.5.15-1+cuda9.0_amd64
+        sudo dpkg -i libcudnn7_7.0.3.11-1+cuda9.0_amd64.deb
+        export CUDA_HOEM=/usr/local/cuda
+        ```
+    4. install libcupti-dev library
+        ```
+        sudo apt-get install cuda-command-line-tools
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
+        ```
+    5. Tensorflow
+        ```
+        sudo apt-get install python3-pip python3-dev
+        pip3 install tensorflow-gpu
+        ```
+    6. Validate
+        ```python
+        import tensorflow as tf
+        hello = tf.constant('Hello, TensorFlow!')
+        with tf.device('/gpu:0'), tf.Session() as sess:
+            print(sess.run(hello))
+        ```
+
+
 
 
 Reference
 - 请问一个使用Amazon EC2 P2竞价实例做计算数据保存的问题? - Ray Wang的回答 - 知乎https://www.zhihu.com/question/62458408/answer/199345173
 - https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/ebs-using-volumes.html
+- [CUDA Installation
+  Guide](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/#axzz4VZnqTJ2A)
+- [cuDNN Installation
+  Guide](http://developer.download.nvidia.com/compute/machine-learning/cudnn/secure/v7.0.5/prod/Doc/cuDNN-Installation-Guide.pdf?uUC-ZDHRpDmlrNq_7GTYkv87I6DMyvaoxYPW7GmQs3Hd8I738fu2u9NDNsXZDu21SglpQCxd4Y4IBhHp5iuXFsD43i54dybJchanofnRidbVVmk8v8ujlkEFYhiARRkgqzBDUsQklP3aE2UmIOrDKjRu6qbUP8q5Fh6HuZPr3wQiiX8XBXI353R3emrZxiT9Mg)
