@@ -47,6 +47,7 @@
         export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
         ```
     3. cuDNN
+
         first download the installation file into local disk and then use scp to transfer
         data
         ```
@@ -72,7 +73,7 @@
         ```
     7. Download code
         ```
-        wget https://github.com/hcz28/style_transfer.git
+        git clone https://github.com/hcz28/style_transfer.git
         ```
     8. Others
         1. security group should enable ssh in the inbound rules
