@@ -71,6 +71,8 @@
         ```
         wget https://github.com/hcz28/style_transfer.git
         ```
+    8. Others
+        1. security group should enable ssh in the inbound rules
 
 References
 - [请问一个使用Amazon EC2 P2竞价实例做计算数据保存的问题? - Ray Wang的回答 - 知乎](https://www.zhihu.com/question/62458408/answer/199345173)
