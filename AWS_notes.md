@@ -25,6 +25,7 @@
         bash Anaconda-latest-Linux-x86_64.sh
         export PATH=~/anaconda3/bin:$PATH
     2. CUDA 9.0
+        
         check GPU
         ```
         lspci | grep -i nvidia
@@ -34,7 +35,7 @@
         wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
         sudo sh cuda_9.0.176_384.81_linux.run
         ```
-        evvironment setup
+        environment setup
         ```
         export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} 
         export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
