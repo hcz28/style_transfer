@@ -4,4 +4,6 @@ __pycache__
 data
 checkpoints
 old
+results
+test
 *.pem
