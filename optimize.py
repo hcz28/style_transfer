@@ -74,7 +74,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
                     style_loss_p, content_loss_p, tv_loss_p,loss_p, preds_p = tup
                     losses = (style_loss_p, content_loss_p, tv_loss_p, loss_p)
                     saver = tf.train.Saver()
-                    res = saver.save(sess, save_path)
+                    res = saver.save(sess, save_path, iterations)
                     yield(preds_p, losses, iterations, epoch)
 
 
