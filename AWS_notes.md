@@ -10,7 +10,7 @@
         lsblk
         sudo mkfs -t ext4 device_name
         sudo mkdir mount_point
-        sudo mount device_name mount_point
+        sudo mount /dev/device_name mount_point
         ```
     2. 跑程序，download数据，或者保存checkpoint
     3. 停止instance
