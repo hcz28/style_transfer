@@ -7,6 +7,16 @@ import pdb
 MEAN_PIXEL = np.array([123.68, 116.779, 103.939])
 
 def net(vgg_path, input_image):
+    """
+    Calculate the output of the layers of VGG19 network.
+
+    Args:
+        vgg_path
+        input_image
+
+    Returns:
+        A dictionary. Key is the name of VGG19 layers, value is the output of layers.
+    """
     layers = (
             'conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1',
 
