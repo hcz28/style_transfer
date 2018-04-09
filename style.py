@@ -12,6 +12,7 @@ TV_WEIGHT = 2e2
 LEARNING_RATE = 1e-3
 NUM_EPOCHS = 2
 CHECKPOINT_DIR = 'checkpoints'
+SUMMARY_DIR = 'summary'
 CHECKPOINT_ITERATIONS = 2000
 VGG_PATH = 'data/imagenet-vgg-verydeep-19.mat'
 TRAIN_PATH = 'data/train2014'
@@ -32,14 +33,18 @@ def build_parser():
             default=TRAIN_PATH)
 
     parser.add_argument('--checkpoint-dir', type=str, dest='checkpoint_dir',
-            help='dir to save checkpoint in', metavar='CHECKPOINT_DIR',
+            help='dir to save checkpoint files', metavar='CHECKPOINT_DIR',
             default=CHECKPOINT_DIR)
 
-    parser.add_argument('--test', type=str, dest='test', 
-            help='test image path', metavar='TEST', default=False)
+    parser.add_argument('--summary-dir', type=str, dest='summary_dir',
+            help='dir to save summaries', metavar='SUMMARY_DIR',
+            default=SUMMARY_DIR)
 
-    parser.add_argument('--test-dir', type=str, dest='test_dir', 
-            help='test image save dir', metavar='TEST_DIR', default=False)
+   # parser.add_argument('--test', type=str, dest='test', 
+   #         help='test image path', metavar='TEST', default=False)
+
+   # parser.add_argument('--test-dir', type=str, dest='test_dir', 
+   #         help='test image save dir', metavar='TEST_DIR', default=False)
     
     parser.add_argument('--epochs', type=int, dest='epochs', 
             help='num epochs', metavar='EPOCHS', default=NUM_EPOCHS)
@@ -74,11 +79,12 @@ def build_parser():
 
 def check_opts(opts):
     exists(opts.checkpoint_dir, "checkpoint dir not found!")
+    exists(opts.summary_dir, "summary dir not found!")
     exists(opts.style, "style path not found!")
     exists(opts.train_path, "train path not found!")
-    if opts.test or opts.test_dir:
-        exists(opts.test, "test img not found!")
-        exists(opts.test_dir, "test directory not found!")
+    #if opts.test or opts.test_dir:
+    #    exists(opts.test, "test img not found!")
+    #    exists(opts.test_dir, "test directory not found!")
     exists(opts.vgg_path, "vgg network not found!")
     assert opts.epochs > 0
     assert opts.batch_size > 0
@@ -103,7 +109,8 @@ def main():
             "epochs":options.epochs,
             "print_iterations":options.checkpoint_iterations,
             "batch_size":options.batch_size,
-            "save_path":os.path.join(options.checkpoint_dir,'fns.ckpt'),
+            "checkpoint_dir":os.path.join(options.checkpoint_dir,'fns.ckpt'),
+            "summary_dir":options.summary_dir,
             "learning_rate":options.learning_rate
             }
     args = [

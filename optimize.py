@@ -11,7 +11,7 @@ DEVICES = 'CUDA_VISIBLE_DEVICES'
 
 def optimize(content_targets, style_target, content_weight, style_weight,
         tv_weight, vgg_path, epochs=2, print_iterations=1000, batch_size=4,
-        save_path='saver/fns.ckpt', learning_rate=1e-3):
+        checkpoint_dir='saver/fns.ckpt', summary_dir='summary/', learning_rate=1e-3):
     """
     Calculate the total loss and optimize the network.
 
@@ -25,7 +25,8 @@ def optimize(content_targets, style_target, content_weight, style_weight,
         epochs: Number of epochs for training. Default: 2. 
         print_iteration: Print the trainging loss. Default: 1000
         batch_size: Default: 4.
-        save_path: Path to save the checkpoint.
+        checkpoint_dir: Path to save the checkpoint.
+        summary_dir: Path to save summaries.
         learning_rate: Default: 1e-3.
 
     Returns:
@@ -61,10 +62,17 @@ def optimize(content_targets, style_target, content_weight, style_weight,
     tv_loss = _tv_loss(tv_weight, preds, batch_shape)
     loss = content_loss + style_loss + tv_loss
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
-
+    
+    # summary for tensorboard
+    tf.scalar_summary("content loss", content_loss)
+    tf.scalar_summary("style loss", style_loss)
+    tf.scalar_summary("tv loss", tv_loss)
+    tf.scalar_summary("total loss", loss)
+    summary_op = tf.merge_all_summaries()
+    writer = tf.summary.Filewriter(summary_dir, graph=tf.get_default_graph())
+    
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        
         for epoch in range(epochs):
             num_examples = len(content_targets)
             iterations = 0
@@ -82,7 +90,8 @@ def optimize(content_targets, style_target, content_weight, style_weight,
                         X_content : X_batch 
                         }
                 #train_step.run(feed_dict = feed_dict)
-                sess.run(train_step, feed_dict = feed_dict)
+                summary, _ = sess.run([summary_op, train_step], feed_dict = feed_dict)
+
                 is_print_iter = int(iterations) % print_iterations == 0
                 is_last = epoch == epochs - 1 and iterations * batch_size >= num_examples
                 should_print = is_print_iter or is_last
@@ -93,8 +102,11 @@ def optimize(content_targets, style_target, content_weight, style_weight,
                     style_loss_p, content_loss_p, tv_loss_p,loss_p, preds_p = tup
                     losses = (style_loss_p, content_loss_p, tv_loss_p, loss_p)
                     saver = tf.train.Saver()
-                    res = saver.save(sess, save_path, iterations)
+                    res = saver.save(sess, checkpoint_dir, iterations)
                     yield(preds_p, losses, iterations, epoch)
+                
+                if int(iterations) % 20 == 0:
+                    writer.add_summary(summary)
 
 
 def _style_features(style_target, vgg_path):
