@@ -64,12 +64,12 @@ def optimize(content_targets, style_target, content_weight, style_weight,
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
     
     # summary for tensorboard
-    tf.scalar_summary("content loss", content_loss)
-    tf.scalar_summary("style loss", style_loss)
-    tf.scalar_summary("tv loss", tv_loss)
-    tf.scalar_summary("total loss", loss)
-    summary_op = tf.merge_all_summaries()
-    writer = tf.summary.Filewriter(summary_dir, graph=tf.get_default_graph())
+    tf.summary.scalar("content loss", content_loss)
+    tf.summary.scalar("style loss", style_loss)
+    tf.summary.scalar("tv loss", tv_loss)
+    tf.summary.scalar("total loss", loss)
+    summary_op = tf.summary.merge_all()
+    writer = tf.summary.FileWriter(summary_dir, graph=tf.get_default_graph())
     
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
