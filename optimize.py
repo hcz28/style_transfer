@@ -101,7 +101,7 @@ def optimize(content_targets, style_target, content_weight, style_weight,
                     tup = sess.run(to_get, feed_dict = test_feed_dict)
                     style_loss_p, content_loss_p, tv_loss_p,loss_p, preds_p = tup
                     losses = (style_loss_p, content_loss_p, tv_loss_p, loss_p)
-                    saver = tf.train.Saver()
+                    saver = tf.train.Saver(max_to_keep = 5)
                     res = saver.save(sess, checkpoint_dir, iterations)
                     yield(preds_p, losses, iterations, epoch)
                 
